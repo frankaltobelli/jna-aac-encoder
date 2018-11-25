@@ -64,6 +64,7 @@ public class AACAudioEncoder implements AutoCloseable {
         this.outArgs = new AACEncOutArgs();
         this.inBufferDescriptor = FdkAACLibFacade.inBufferDescriptor(inBuffer);
         this.outBufferDescriptor = FdkAACLibFacade.outBufferDescriptor(outBuffer);
+        //FdkAACLibFacade.getLibraryInfo();
         disableStructureSynchronization();
     }
 
@@ -132,7 +133,7 @@ public class AACAudioEncoder implements AutoCloseable {
             val inputStream = new ByteArrayInputStream(inputData);
             byte[] buffer = new byte[inputBufferSize()];
             while ((read = inputStream.read(buffer)) != WAVAudioSupport.EOS) {
-                populateInputBuffer(buffer, read);
+                populateInputBufferDescriptor(buffer, read);
                 byte[] encoded = FdkAACLibFacade.encode(encoder, inBufferDescriptor, outBufferDescriptor, inArgs, outArgs, read)
                         .orElseThrow(() -> new IllegalStateException("No encoded audio data returned"));
                 accumulator.accumulate(encoded);
@@ -147,7 +148,6 @@ public class AACAudioEncoder implements AutoCloseable {
         Optional<byte[]> optional;
         verifyState();
         try {
-            inBufferDescriptor.clear();
             val accumulator = AACAudioOutput.accumulator();
             while ((optional = FdkAACLibFacade.encode(encoder, inBufferDescriptor, outBufferDescriptor, inArgs, outArgs, WAVAudioSupport.EOS)).isPresent()) {
                 accumulator.accumulate(optional.get());
@@ -160,12 +160,17 @@ public class AACAudioEncoder implements AutoCloseable {
         }
     }
 
-    private void populateInputBuffer(@Nonnull byte[] buffer, int size) {
+    private void populateInputBufferDescriptor(@Nonnull byte[] buffer, int size) {
         inBuffer.write(0, buffer, 0, size);
         if (size != inputBufferSize) {
             inBufferDescriptor.bufSizes = new IntByReference(size);
             inBufferDescriptor.writeField("bufSizes");
         }
+    }
+
+    private void emptyInputBufferDescriptor() {
+        inBufferDescriptor.bufSizes = new IntByReference(0);
+        inBufferDescriptor.writeField("bufSizes");
     }
 
     /*

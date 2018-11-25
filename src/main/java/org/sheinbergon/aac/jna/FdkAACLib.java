@@ -1,6 +1,7 @@
 package org.sheinbergon.aac.jna;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import lombok.RequiredArgsConstructor;
 import org.sheinbergon.aac.jna.structure.*;
@@ -9,7 +10,8 @@ public class FdkAACLib {
 
     @RequiredArgsConstructor
     enum Methods {
-        INFO("aacEncInfo"),
+        LIBRARY_INFO("aacEncGetLibInfo"),
+        ENCODER_INFO("aacEncInfo"),
         SET_PARAM("aacEncoder_SetParam"),
         OPEN("accEncOpen"),
         CLOSE("accEncClose"),
@@ -23,6 +25,8 @@ public class FdkAACLib {
     static {
         Native.register(FDK_AAC);
     }
+
+    static native int aacEncGetLibInfo(Pointer info);
 
     static native int aacEncOpen(PointerByReference handle, final int encModules, final int maxChannels);
 

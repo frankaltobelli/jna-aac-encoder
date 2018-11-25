@@ -1,7 +1,7 @@
 FROM azul/zulu-openjdk:11
 
 # Constants
-ENV FDK_AAC_VERSION=0.1.6 \
+ENV FDK_AAC_VERSION=2.0.0 \
     APPLICATION_DIRECTORY=/opt/jna-aac-encoder \
     LIBRARY_SOURCE_ARCHIVE=/tmp/fdk-aac.tar.gz
 

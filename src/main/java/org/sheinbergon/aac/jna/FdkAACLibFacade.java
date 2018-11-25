@@ -11,6 +11,7 @@ import org.sheinbergon.aac.jna.util.AACEncParam;
 import org.sheinbergon.aac.jna.util.FdkAACLibException;
 import org.sheinbergon.aac.jna.util.JNAUtil;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class FdkAACLibFacade {
@@ -25,6 +26,12 @@ public class FdkAACLibFacade {
     private final static int OUT_BUFFER_COUNT = 1;
     private final static int OUT_BUFFER_IDENTIFIER = 3;
     private final static int OUT_BUFFER_ELEMENT_SIZE = 1;
+
+    // Library information constants
+    private final static int FDK_MODULE_LAST = 39;
+    private final static String AAC_ENCODER_MODULE = "AAC Encoder";
+
+
 
     public static AACEncoder openEncoder(int modules, int maxChannels) {
         PointerByReference pointerRef = new PointerByReference();
@@ -63,10 +70,20 @@ public class FdkAACLibFacade {
     public static AACEncInfo getEncoderInfo(AACEncoder encoder) {
         AACEncInfo info = new AACEncInfo();
         AACEncError result = AACEncError.valueOf(FdkAACLib.aacEncInfo(encoder, info));
-        verifyResult(result, FdkAACLib.Methods.INFO);
+        verifyResult(result, FdkAACLib.Methods.ENCODER_INFO);
         info.read();
         return info;
     }
+
+//    public static String getEncoderVersion() {
+//        val elements = (LibInfo[]) new LibInfo().toArray(FDK_MODULE_LAST);
+//        AACEncError result = AACEncError.valueOf(FdkAACLib.aacEncGetLibInfo(elements[0].getPointer()));
+//        verifyResult(result, FdkAACLib.Methods.LIBRARY_INFO);
+//        Arrays.stream(elements).forEach(e -> {
+//            e.read();
+//            System.out.println(e.title + " - " + new String(e.versionStr).trim();
+//        });
+//    }
 
     public static void setEncoderParam(AACEncoder encoder, AACEncParam param, int value) {
         AACEncError result = AACEncError.valueOf(FdkAACLib.aacEncoder_SetParam(encoder, param.getValue(), value));

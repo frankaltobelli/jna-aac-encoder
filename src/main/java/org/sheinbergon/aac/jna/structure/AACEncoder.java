@@ -26,7 +26,7 @@ public class AACEncoder extends Structure {
 
     private AACEncoder(Pointer pointer) {
         super(pointer);
-        setAlignType(Structure.ALIGN_NONE); // Make sure field size alignments are as expected
+        setAlignType(ALIGN_NONE); // Make sure field size alignments are as expected
         read(); // Read once after initialize from provided pointer
     }
 
@@ -37,15 +37,19 @@ public class AACEncoder extends Structure {
     public Pointer hEnvEnc;
     public Pointer hMetadataEnc;
     public int metaDataAllowed;
+    public Pointer hMpsEnc;
     public Pointer hTpEnc;
-    public ByteByReference outBuffer;
-    public int outBufferInBytes;
     public ShortByReference inputBuffer;
+    public ByteByReference outBuffer;
+    public int inputBufferSize;
+    public int inputBufferSizePerChannel;
+    public int outBufferInBytes;
     public int inputBufferOffset;
     public int nSamplesToRead;
     public int nSamplesRead;
     public int nZerosAppended;
     public int nDelay;
+    public int nDelayCore;
     /*
         Arrays - 1D, 2D or even 3D, are initialized as 1D to accommodate for size allocation.
         This is due to the fact JNA doesn't support mapping multi-dimensional array inside structs with simple
@@ -53,14 +57,11 @@ public class AACEncoder extends Structure {
         perfectly fine with it
      */
     public AACEncExtPayload[] extPayload = new AACEncExtPayload[MAX_TOTAL_EXT_PAYLOADS];
-    public byte[] extPayloadData = new byte[8 * MAX_PAYLOAD_SIZE];
-    public int[] extPayloadSize = new int[8];
-    public long InitFlags;
+    public int InitFlags;
     public int nMaxAacElements;
     public int nMaxAacChannels;
     public int nMaxSbrElements;
     public int nMaxSbrChannels;
-    public int nMaxSubFrames;
     public int encoder_modis;
     public int CAPF_tpEnc;
 

@@ -1,5 +1,6 @@
 package org.sheinbergon.aac.jna.structure;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import org.sheinbergon.aac.jna.util.JNAUtil;
 
